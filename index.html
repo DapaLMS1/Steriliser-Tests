@@ -1,192 +1,247 @@
-import React, { useState } from 'react';
-import { ShieldCheck, Wind, Droplets, Gauge, AlertCircle, TestTube2, CheckCircle2 } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steriliser Validation Tests</title>
+  <!-- Tailwind CSS via CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    
+    /* Default state for tab content */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-10">
 
-const steriliserTests = [
-  {
-    id: 'bowie-dick',
-    title: 'Bowie-Dick Test',
-    icon: <ShieldCheck className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          The Bowie-Dick test demonstrates that steam effectively displaces air within porous items. It does not verify cycle temperature or time. 
-        </p>
-        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
-          <h4 className="font-semibold text-[#532A8C] mb-2">Procedure</h4>
-          <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            <li>Conduct this test daily, and following any autoclave calibration, installation, relocation, or repair.</li>
-            <li>Perform the test in an empty chamber with no other items.</li>
-            <li>Place the test pack kit in the centre of a tray on the lowest rack position.</li>
-            <li>Run the specific Bowie-Dick test cycle.</li>
-            <li>Upon completion, remove the pack and verify the required colour change.</li>
-          </ul>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 'helix',
-    title: 'Helix Test',
-    icon: <Wind className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          The Helix test measures steam penetration strength within the autoclave chamber, specifically verifying that steam reaches inside hollow instruments.
-        </p>
-        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
-          <h4 className="font-semibold text-[#532A8C] mb-2">Procedure</h4>
-          <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            <li>Insert the test strip into the slot and place the device in an empty chamber.</li>
-            <li>Perform this procedure after the vacuum test.</li>
-            <li>Run the specific Helix test cycle.</li>
-            <li>Upon completion, check the indicator strip for colour change.</li>
-            <li><strong>Mandatory:</strong> The results of this test must be formally recorded.</li>
-          </ul>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 'leak-rate',
-    title: 'Leak Rate Test',
-    icon: <Gauge className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          This test calculates the rate of air leaking into the chamber to ensure the integrity of the vacuum seal.
-        </p>
-        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
-          <h4 className="font-semibold text-[#532A8C] mb-2">Cycle Profile</h4>
-          <p className="text-gray-700">
-            A standard vacuum leak test cycle involves three vacuum and pressure pulses, followed by a 15-minute dwell period under deep vacuum.
-          </p>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 'steam-penetration',
-    title: 'Steam Penetration Test',
-    icon: <Droplets className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          This is a formal validation test to ensure the machine can successfully force steam into the load.
-        </p>
-        <div className="flex items-start gap-3 bg-[#C3ACE8] bg-opacity-30 p-4 rounded-lg">
-          <AlertCircle className="w-6 h-6 text-[#532A8C] flex-shrink-0 mt-0.5" />
-          <p className="text-gray-800">
-            A qualified technician performs this test during the initial purchase and setup, and subsequently during scheduled calibrations (usually every 12 months).
-          </p>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 'air-detector',
-    title: 'Air Detector Test',
-    icon: <Wind className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          Most modern autoclaves are fitted with a residual air detector. This automated test continuously monitors and verifies if any air remains present in the chamber during the cycle.
-        </p>
-        <div className="flex items-center gap-3 bg-[#96BF78] bg-opacity-20 p-4 rounded-lg text-gray-800">
-          <CheckCircle2 className="w-6 h-6 text-[#7ABF49]" />
-          <p>Ensures optimal conditions for steam contact on all instrument surfaces.</p>
-        </div>
-      </div>
-    )
-  },
-  {
-    id: 'biological',
-    title: 'Biological & PCD Tests',
-    icon: <TestTube2 className="w-5 h-5" />,
-    content: (
-      <div className="space-y-4">
-        <p>
-          Biological monitoring tests and Process Challenge Device (PCD) tests are optional, non-mandatory assessments. 
-        </p>
-        <p className="text-gray-700">
-          These indicators evaluate all variables of the sterilisation process to comprehensively confirm that conditions were sufficient for sterilisation to occur.
-        </p>
-        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
-          <h4 className="font-semibold text-[#532A8C] mb-2">Biological Monitoring</h4>
-          <p className="text-gray-700">
-            Biological monitoring tests utilise live spores. After they have been processed through a clinical load, they must be incubated to verify that no spores survived.
-          </p>
-        </div>
-      </div>
-    )
-  }
-];
+  <div class="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-lg font-sans">
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold text-[#532A8C] mb-2">Steriliser Validation Tests</h2>
+      <p class="text-gray-600">Select a test below to view clinical protocols and requirements.</p>
+    </div>
 
-export default function SteriliserTests() {
-  const [activeTab, setActiveTab] = useState(steriliserTests[0].id);
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Navigation Sidebar -->
+      <div class="w-full md:w-1/3 flex flex-col gap-2" id="tab-buttons">
+        
+        <button onclick="switchTab('bowie-dick', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#532A8C] text-[#F2F2F2] shadow-md border-l-4 border-[#7ABF49]">
+          <span class="icon-wrapper text-[#7ABF49]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <span class="font-semibold">Bowie-Dick Test</span>
+        </button>
 
-  return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-lg font-sans">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-[#532A8C] mb-2">Steriliser Validation Tests</h2>
-        <p className="text-gray-600">Select a test below to view clinical protocols and requirements.</p>
+        <button onclick="switchTab('helix', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent">
+          <span class="icon-wrapper text-[#9D8ABB]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+          </span>
+          <span class="font-semibold">Helix Test</span>
+        </button>
+
+        <button onclick="switchTab('leak-rate', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent">
+          <span class="icon-wrapper text-[#9D8ABB]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 16A10 10 0 1 1 20.66 16"/></svg>
+          </span>
+          <span class="font-semibold">Leak Rate Test</span>
+        </button>
+
+        <button onclick="switchTab('steam-penetration', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent">
+          <span class="icon-wrapper text-[#9D8ABB]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 2.9 7 2.9s-2.29 6.16-2.29 6.16v.01C3.57 10 3 11.08 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M16 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S16 2.9 16 2.9s-2.29 6.16-2.29 6.16v.01c-1.14.93-1.71 2.01-1.71 3.18 0 2.22 1.8 4.05 4 4.05z"/></svg>
+          </span>
+          <span class="font-semibold">Steam Penetration Test</span>
+        </button>
+
+        <button onclick="switchTab('air-detector', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent">
+          <span class="icon-wrapper text-[#9D8ABB]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+          </span>
+          <span class="font-semibold">Air Detector Test</span>
+        </button>
+
+        <button onclick="switchTab('biological', this)" class="tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent">
+          <span class="icon-wrapper text-[#9D8ABB]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7 6.82 21.18a2.83 2.83 0 0 1-3.99-.01v0a2.83 2.83 0 0 1 0-4L17 3"/><path d="m16 2 6 6"/><path d="M12 16H4"/></svg>
+          </span>
+          <span class="font-semibold">Biological & PCD Tests</span>
+        </button>
+
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Navigation Sidebar */}
-        <div className="w-full md:w-1/3 flex flex-col gap-2">
-          {steriliserTests.map((test) => (
-            <button
-              key={test.id}
-              onClick={() => setActiveTab(test.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
-                activeTab === test.id
-                  ? 'bg-[#532A8C] text-[#F2F2F2] shadow-md border-l-4 border-[#7ABF49]'
-                  : 'bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent'
-              }`}
-            >
-              <span className={`${activeTab === test.id ? 'text-[#7ABF49]' : 'text-[#9D8ABB]'}`}>
-                {test.icon}
-              </span>
-              <span className="font-semibold">{test.title}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <div className="w-full md:w-2/3">
-          {steriliserTests.map((test) => (
-            <div
-              key={test.id}
-              className={`${
-                activeTab === test.id ? 'block' : 'hidden'
-              } animate-fadeIn`}
-            >
-              <div className="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
-                  <div className="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
-                    {test.icon}
-                  </div>
-                  <h3 className="text-2xl font-bold text-[#532A8C]">{test.title}</h3>
-                </div>
-                
-                <div className="text-lg leading-relaxed text-gray-800">
-                  {test.content}
-                </div>
+      <!-- Content Area -->
+      <div class="w-full md:w-2/3 relative min-h-[400px]">
+        
+        <!-- Bowie-Dick Content -->
+        <div id="bowie-dick" class="tab-content active animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Bowie-Dick Test</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>The Bowie-Dick test demonstrates that steam effectively displaces air within porous items. It does not verify cycle temperature or time.</p>
+              <div class="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
+                <h4 class="font-semibold text-[#532A8C] mb-2">Procedure</h4>
+                <ul class="list-disc pl-5 space-y-2 text-gray-700 text-base">
+                  <li>Conduct this test daily, and following any autoclave calibration, installation, relocation, or repair.</li>
+                  <li>Perform the test in an empty chamber with no other items.</li>
+                  <li>Place the test pack kit in the centre of a tray on the lowest rack position.</li>
+                  <li>Run the specific Bowie-Dick test cycle.</li>
+                  <li>Upon completion, remove the pack and verify the required colour change.</li>
+                </ul>
               </div>
             </div>
-          ))}
+          </div>
         </div>
+
+        <!-- Helix Content -->
+        <div id="helix" class="tab-content animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Helix Test</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>The Helix test measures steam penetration strength within the autoclave chamber, specifically verifying that steam reaches inside hollow instruments.</p>
+              <div class="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
+                <h4 class="font-semibold text-[#532A8C] mb-2">Procedure</h4>
+                <ul class="list-disc pl-5 space-y-2 text-gray-700 text-base">
+                  <li>Insert the test strip into the slot and place the device in an empty chamber.</li>
+                  <li>Perform this procedure after the vacuum test.</li>
+                  <li>Run the specific Helix test cycle.</li>
+                  <li>Upon completion, check the indicator strip for colour change.</li>
+                  <li><strong>Mandatory:</strong> The results of this test must be formally recorded.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leak Rate Content -->
+        <div id="leak-rate" class="tab-content animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 16A10 10 0 1 1 20.66 16"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Leak Rate Test</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>This test calculates the rate of air leaking into the chamber to ensure the integrity of the vacuum seal.</p>
+              <div class="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
+                <h4 class="font-semibold text-[#532A8C] mb-2">Cycle Profile</h4>
+                <p class="text-gray-700 text-base">A standard vacuum leak test cycle involves three vacuum and pressure pulses, followed by a 15-minute dwell period under deep vacuum.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Steam Penetration Content -->
+        <div id="steam-penetration" class="tab-content animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 2.9 7 2.9s-2.29 6.16-2.29 6.16v.01C3.57 10 3 11.08 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M16 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S16 2.9 16 2.9s-2.29 6.16-2.29 6.16v.01c-1.14.93-1.71 2.01-1.71 3.18 0 2.22 1.8 4.05 4 4.05z"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Steam Penetration Test</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>This is a formal validation test to ensure the machine can successfully force steam into the load.</p>
+              <div class="flex items-start gap-3 bg-[#C3ACE8] bg-opacity-30 p-4 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#532A8C] flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p class="text-gray-800 text-base">A qualified technician performs this test during the initial purchase and setup, and subsequently during scheduled calibrations (usually every 12 months).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Air Detector Content -->
+        <div id="air-detector" class="tab-content animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Air Detector Test</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>Most modern autoclaves are fitted with a residual air detector. This automated test continuously monitors and verifies if any air remains present in the chamber during the cycle.</p>
+              <div class="flex items-center gap-3 bg-[#96BF78] bg-opacity-20 p-4 rounded-lg text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#7ABF49]"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                <p class="text-base">Ensures optimal conditions for steam contact on all instrument surfaces.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biological Content -->
+        <div id="biological" class="tab-content animate-fadeIn h-full">
+          <div class="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+              <div class="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7 6.82 21.18a2.83 2.83 0 0 1-3.99-.01v0a2.83 2.83 0 0 1 0-4L17 3"/><path d="m16 2 6 6"/><path d="M12 16H4"/></svg>
+              </div>
+              <h3 class="text-2xl font-bold text-[#532A8C]">Biological & PCD Tests</h3>
+            </div>
+            <div class="text-lg leading-relaxed text-gray-800 space-y-4">
+              <p>Biological monitoring tests and Process Challenge Device (PCD) tests are optional, non-mandatory assessments.</p>
+              <p class="text-gray-700 text-base">These indicators evaluate all variables of the sterilisation process to comprehensively confirm that conditions were sufficient for sterilisation to occur.</p>
+              <div class="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
+                <h4 class="font-semibold text-[#532A8C] mb-2">Biological Monitoring</h4>
+                <p class="text-gray-700 text-base">Biological monitoring tests utilise live spores. After they have been processed through a clinical load, they must be incubated to verify that no spores survived.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-      `}} />
     </div>
-  );
-}
+  </div>
+
+  <script>
+    function switchTab(tabId, clickedButton) {
+      // 1. Hide all tab contents
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // 2. Show the target content
+      const targetContent = document.getElementById(tabId);
+      targetContent.classList.add('active');
+
+      // 3. Reset all buttons to the inactive style
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(btn => {
+        // Reset button classes
+        btn.className = "tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent";
+        // Reset icon wrapper classes
+        const iconWrapper = btn.querySelector('.icon-wrapper');
+        if(iconWrapper) iconWrapper.className = "icon-wrapper text-[#9D8ABB]";
+      });
+
+      // 4. Set the active style on the clicked button
+      clickedButton.className = "tab-button flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 bg-[#532A8C] text-[#F2F2F2] shadow-md border-l-4 border-[#7ABF49]";
+      const activeIconWrapper = clickedButton.querySelector('.icon-wrapper');
+      if(activeIconWrapper) activeIconWrapper.className = "icon-wrapper text-[#7ABF49]";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import { ShieldCheck, Wind, Droplets, Gauge, AlertCircle, TestTube2, CheckCircle2 } from 'lucide-react';
+
+const steriliserTests = [
+  {
+    id: 'bowie-dick',
+    title: 'Bowie-Dick Test',
+    icon: <ShieldCheck className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          The Bowie-Dick test demonstrates that steam effectively displaces air within porous items. It does not verify cycle temperature or time. 
+        </p>
+        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
+          <h4 className="font-semibold text-[#532A8C] mb-2">Procedure</h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>Conduct this test daily, and following any autoclave calibration, installation, relocation, or repair.</li>
+            <li>Perform the test in an empty chamber with no other items.</li>
+            <li>Place the test pack kit in the centre of a tray on the lowest rack position.</li>
+            <li>Run the specific Bowie-Dick test cycle.</li>
+            <li>Upon completion, remove the pack and verify the required colour change.</li>
+          </ul>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'helix',
+    title: 'Helix Test',
+    icon: <Wind className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          The Helix test measures steam penetration strength within the autoclave chamber, specifically verifying that steam reaches inside hollow instruments.
+        </p>
+        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#7ABF49]">
+          <h4 className="font-semibold text-[#532A8C] mb-2">Procedure</h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>Insert the test strip into the slot and place the device in an empty chamber.</li>
+            <li>Perform this procedure after the vacuum test.</li>
+            <li>Run the specific Helix test cycle.</li>
+            <li>Upon completion, check the indicator strip for colour change.</li>
+            <li><strong>Mandatory:</strong> The results of this test must be formally recorded.</li>
+          </ul>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'leak-rate',
+    title: 'Leak Rate Test',
+    icon: <Gauge className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          This test calculates the rate of air leaking into the chamber to ensure the integrity of the vacuum seal.
+        </p>
+        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
+          <h4 className="font-semibold text-[#532A8C] mb-2">Cycle Profile</h4>
+          <p className="text-gray-700">
+            A standard vacuum leak test cycle involves three vacuum and pressure pulses, followed by a 15-minute dwell period under deep vacuum.
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'steam-penetration',
+    title: 'Steam Penetration Test',
+    icon: <Droplets className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          This is a formal validation test to ensure the machine can successfully force steam into the load.
+        </p>
+        <div className="flex items-start gap-3 bg-[#C3ACE8] bg-opacity-30 p-4 rounded-lg">
+          <AlertCircle className="w-6 h-6 text-[#532A8C] flex-shrink-0 mt-0.5" />
+          <p className="text-gray-800">
+            A qualified technician performs this test during the initial purchase and setup, and subsequently during scheduled calibrations (usually every 12 months).
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'air-detector',
+    title: 'Air Detector Test',
+    icon: <Wind className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          Most modern autoclaves are fitted with a residual air detector. This automated test continuously monitors and verifies if any air remains present in the chamber during the cycle.
+        </p>
+        <div className="flex items-center gap-3 bg-[#96BF78] bg-opacity-20 p-4 rounded-lg text-gray-800">
+          <CheckCircle2 className="w-6 h-6 text-[#7ABF49]" />
+          <p>Ensures optimal conditions for steam contact on all instrument surfaces.</p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'biological',
+    title: 'Biological & PCD Tests',
+    icon: <TestTube2 className="w-5 h-5" />,
+    content: (
+      <div className="space-y-4">
+        <p>
+          Biological monitoring tests and Process Challenge Device (PCD) tests are optional, non-mandatory assessments. 
+        </p>
+        <p className="text-gray-700">
+          These indicators evaluate all variables of the sterilisation process to comprehensively confirm that conditions were sufficient for sterilisation to occur.
+        </p>
+        <div className="bg-[#F2F2F2] p-4 rounded-lg border-l-4 border-[#9D8ABB]">
+          <h4 className="font-semibold text-[#532A8C] mb-2">Biological Monitoring</h4>
+          <p className="text-gray-700">
+            Biological monitoring tests utilise live spores. After they have been processed through a clinical load, they must be incubated to verify that no spores survived.
+          </p>
+        </div>
+      </div>
+    )
+  }
+];
+
+export default function SteriliserTests() {
+  const [activeTab, setActiveTab] = useState(steriliserTests[0].id);
+
+  return (
+    <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-lg font-sans">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#532A8C] mb-2">Steriliser Validation Tests</h2>
+        <p className="text-gray-600">Select a test below to view clinical protocols and requirements.</p>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Navigation Sidebar */}
+        <div className="w-full md:w-1/3 flex flex-col gap-2">
+          {steriliserTests.map((test) => (
+            <button
+              key={test.id}
+              onClick={() => setActiveTab(test.id)}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
+                activeTab === test.id
+                  ? 'bg-[#532A8C] text-[#F2F2F2] shadow-md border-l-4 border-[#7ABF49]'
+                  : 'bg-[#F2F2F2] text-[#532A8C] hover:bg-[#C3ACE8] hover:text-[#532A8C] border-l-4 border-transparent'
+              }`}
+            >
+              <span className={`${activeTab === test.id ? 'text-[#7ABF49]' : 'text-[#9D8ABB]'}`}>
+                {test.icon}
+              </span>
+              <span className="font-semibold">{test.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Content Area */}
+        <div className="w-full md:w-2/3">
+          {steriliserTests.map((test) => (
+            <div
+              key={test.id}
+              className={`${
+                activeTab === test.id ? 'block' : 'hidden'
+              } animate-fadeIn`}
+            >
+              <div className="bg-white border-2 border-[#F2F2F2] rounded-xl p-6 shadow-sm h-full">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#F2F2F2]">
+                  <div className="p-3 bg-[#532A8C] rounded-lg text-[#F2F2F2]">
+                    {test.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#532A8C]">{test.title}</h3>
+                </div>
+                
+                <div className="text-lg leading-relaxed text-gray-800">
+                  {test.content}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}} />
+    </div>
+  );
+}
